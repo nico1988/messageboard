@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>留言板--Vue</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <style>
+
+    </style>
+    <link rel="stylesheet" href="lib/bootstrap.min.css">
+    <script src="lib/jquery-1.7.2.js"></script>
+    <script src="lib/bootstrap.js"></script>
+    <script src="vue.js"></script>
+    <script>
+        window.onload = function() {
+            new Vue({
+                el: '#box',
+                data: {
+                    myData: [],
+                    username: '',
+                    age: '',
+                    tel: "",
+                    nowindex: 10,
+                    all: "全部"
+                },
+                methods: {
+                    add: function() { //点击添加事件
+                        this.myData.push({
+                            name: this.username,
+                            age: this.age,
+                            tel: this.tel,
+                        });
+                        //点击后重置数据为空
+                        this.username = '';
+                        this.age = '';
+                        this.tel = "";
+                    },
+                    del: function(n) {
+                        if (n == -2) { //这里的-2主要是为了全部删除判断
+                            this.myData = [];
+                        } else {
+                            this.myData.splice(n, 1);
+                        }
+                    }
+                }
+            });
+        };
+    </script>
+</head>
+
+<body>
+    <h1 style="text-align:center">简单留言板（vue） </h1>
+    <br>
+    <br>
+    <br>
+    <div class="container" id="box">
+        <form role="form">
+            <div class="form-group">
+                <label for="username">用户名:</label>
+                <input v-model="username" type="text" id="username" class="form-control" placeholder="输入用户名">
+            </div>
+            <div class="form-group">
+                <label for="age">年　龄:</label>
+                <input v-model="age" type="text" id="age" class="form-control" placeholder="输入年龄">
+            </div>
+            <div class="form-group">
+                <label for="tel">联系方式:</label>
+                <input v-model="tel" type="text" id="tel" class="form-control" placeholder="输入联系方式">
+            </div>
+            <div class="form-group">
+                <input v-on:click="add" type="button" value="添加" class="btn btn-primary">
+                <input type="reset" value="重置" class="btn btn-danger">
+            </div>
+        </form>
+        <hr>
+        <table class="table table-bordered table-hover">
+            <caption class="h2 text-info">用户信息表</caption>
+            <tr style="background:skyblue" class="text-danger">
+                <th class="text-center">序号</th>
+                <th class="text-center">名字</th>
+                <th class="text-center">年龄</th>
+                <th class="text-center">联系方式</th>
+                <th class="text-center">操作</th>
+            </tr>
+            <tr class="text-center" v-for="item in myData">
+                <td>{{$index}}</td>
+                <td>{{item.name}}</td>
+                <td>{{item.age}}</td>
+                <td>{{item.tel}}</td>
+                <td>
+                    <!--这里点击删除，记录现在的索引，然后传值给模态框删除按钮事件-->
+                    <button @click="nowindex = $index" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#layer">删除</button>
+                </td>
+            </tr>
+            <tr v-show="myData.length!=0">
+                <td colspan="5" class="text-right">
+                    <button @click="nowindex=-2" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#layer">删除全部</button>
+                </td>
+            </tr>
+            <tr v-show="myData.length==0">
+                <td colspan="5" class="text-center text-muted">
+                    <p>暂无数据....</p>
+                </td>
+            </tr>
+        </table>
+        <!--模态框-->
+        <div role="dialog" class="modal fade" id="layer">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times</span>
+                        </button>
+                        <h4 class="modal-title text-center">确认删除<span v-show="nowindex==-2">{{all}}</span>么？</h4>
+                    </div>
+                    <div class="modal-body text-right">
+                        <button class="btn btn-primary btn-sm" data-dismiss="modal">取消</button>
+                        <button @click="del(nowindex)" class="btn btn-danger btn-sm" data-dismiss="modal">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>
